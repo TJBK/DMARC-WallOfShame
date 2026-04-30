@@ -23,5 +23,10 @@
   { "name": "VLC", "domain": "videolan.org" },
   { "name": "Spanish Government site", "domain": "gob.es" },
   { "name": "Youtube co.uk", "domain": "youtube.co.uk" },
-  { "name": "7 Zip", "domain": "7-zip.org" }
+  { "name": "7 Zip", "domain": "7-zip.org" },
+  { "name": "Honda", "domain": "honda.co.uk" },
+   { "name": "kia.com", "domain": "kia.com" },
+  { "name": "MG", "domain": "mg.co.uk" },
+  { "name": "Peugeot", "domain": "peugeot.co.uk" },
+  { "name": "Nissan", "domain": "nissan.co.uk" }
 ]

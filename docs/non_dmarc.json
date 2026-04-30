@@ -3,54 +3,90 @@
     "name": "Skoda",
     "domain": "skoda.co.uk",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:46.453986"
+    "last_checked": "2026-04-30T20:40:28.144040"
   },
   {
     "name": "Jaguar",
     "domain": "jaguar.com",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:46.500697"
+    "last_checked": "2026-04-30T20:40:28.169670"
   },
   {
     "name": "Hyundai",
     "domain": "hyundai.com",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:46.687441"
+    "last_checked": "2026-04-30T20:40:28.352361"
   },
   {
     "name": "Citroen",
     "domain": "citroen.co.uk",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:46.988041"
+    "last_checked": "2026-04-30T20:40:28.483523"
   },
   {
     "name": "Asda",
     "domain": "asda.com",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:47.190314"
+    "last_checked": "2026-04-30T20:40:28.528559"
   },
   {
     "name": "Vauxhall",
     "domain": "vauxhall.co.uk",
     "status": "no_dmarc",
-    "last_checked": "2026-04-30T19:48:47.507581"
+    "last_checked": "2026-04-30T20:40:28.836128"
   },
   {
     "name": "TicketMaster",
     "domain": "ticketmaster.co.uk",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:47.553844"
+    "last_checked": "2026-04-30T20:40:29.025930"
   },
   {
     "name": "Github",
     "domain": "github.io",
     "status": "no_dmarc",
-    "last_checked": "2026-04-30T19:48:47.565452"
+    "last_checked": "2026-04-30T20:40:29.057112"
   },
   {
     "name": "Active Quote",
     "domain": "activequote.com",
     "status": "p_none",
-    "last_checked": "2026-04-30T19:48:47.769221"
+    "last_checked": "2026-04-30T20:40:29.269722"
+  },
+  {
+    "name": "Iberia Airlines",
+    "domain": "iberiaexpress.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T20:40:29.274432"
+  },
+  {
+    "name": "Travel Lodge",
+    "domain": "travelodge.co.uk",
+    "status": "p_none",
+    "last_checked": "2026-04-30T20:40:29.296523"
+  },
+  {
+    "name": "Holiday Inn",
+    "domain": "ihg.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T20:40:29.303899"
+  },
+  {
+    "name": "Premier Inn",
+    "domain": "premierinn.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T20:40:29.346684"
+  },
+  {
+    "name": "Iceland Air",
+    "domain": "icelandair.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T20:40:29.403401"
+  },
+  {
+    "name": "Norweigan Air",
+    "domain": "norwegian.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T20:40:29.426219"
   }
 ]

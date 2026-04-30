@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Skoda",
+    "domain": "skoda.co.uk",
+    "status": "p_none",
+    "last_checked": "2026-04-30T19:36:32.156283"
+  },
+  {
+    "name": "Jaguar",
+    "domain": "jaguar.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T19:36:32.240335"
+  },
+  {
+    "name": "Hyundai",
+    "domain": "hyundai.com",
+    "status": "p_none",
+    "last_checked": "2026-04-30T19:36:32.541395"
+  }
+]

@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 INPUT_FILE = "data/companies.json"
-OUTPUT_FILE = "public/non_dmarc.json"
+OUTPUT_FILE = "docs/non_dmarc.json"
 
 
 def get_dmarc_policy(domain):

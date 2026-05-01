@@ -1,5 +1,5 @@
 # DMARC-WallOfShame
-To shame companies who do not implement controls to keep their own organisation and their customers safe with the most basic of controls.
+List of companies who do not implement controls to keep their own organisation and their customers safe with the most basic of controls. ```p=none``` is a temporary measure and your domain should not be ```p=none``` forever. 
 
 
 Tracks domains that:
@@ -17,7 +17,7 @@ Tracks domains that:
 Add domains to:
 `data/companies.json`
 
-> Smaller players will not be accepted due to the fact it will flood the site. Large companies by Revenue or Employee count, Government Entities, Software with a huge supply chain that could cause an supply chain attack, a company that holds signficant PII or is involved in significant infrastructure that if hacked would cause physical destruction or loss of life.
+> Smaller players will not be accepted due to the fact it will flood the site. Large companies by Revenue (or Employee/Customer count), Government Entities, Software with a huge supply chain that could cause an supply chain attack,an Alexa top 1M domain, a company that holds signficant PII or is involved in significant infrastructure that if hacked would cause physical destruction or loss of life.
 
 
 > [!NOTE]

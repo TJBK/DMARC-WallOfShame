@@ -87,5 +87,20 @@
   { "name": "Hyperoptic", "domain": "hyperoptic.com" },
   { "name": "Open Rights Group", "domain": "openrightsgroup.org" },
   { "name": "Only Domains", "domain": "onlydomains.com" },
-  { "name": "Unlimited Web Hosting", "domain": "unlimitedwebhosting.co.uk" }
+  { "name": "Unlimited Web Hosting", "domain": "unlimitedwebhosting.co.uk" },
+  { "name": "Debian", "domain": "debian.org" },
+  { "name": "Linux Foundation", "domain": "linuxfoundation.org" },
+  { "name": "Kali", "domain": "kali.org" },
+  { "name": "KDE", "domain": "kde.org" },
+  { "name": "GNU", "domain": "gnu.org" },
+  { "name": "Fedora Project", "domain": "fedoraproject.org" },
+  { "name": "Linux Mint", "domain": "linuxmint.com" },
+  { "name": "linux.org", "domain": "linux.org" },
+  { "name": "OpenSuse", "domain": "opensuse.org" },
+  { "name": "Ubuntu", "domain": "ubuntu.com" },
+  { "name": "Arch Linux", "domain": "archlinux.org" },
+  { "name": "Unix", "domain": "unix.org" },
+  { "name": "Sublime Text", "domain": "sublimetext.com" },
+  { "name": "Atom IDE", "domain": "atom-editor.cc" },
+  { "name": "Spyder IDE", "domain": "spyder-ide.org" }
 ]

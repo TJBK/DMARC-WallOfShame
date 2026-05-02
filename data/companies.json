@@ -254,5 +254,17 @@
   { "name": "Gaijin", "domain": "gaijin.net" },
   { "name": "Jupyter", "domain": "jupyter.org" },
   { "name": "Cartoon Network", "domain": "cartoonnetwork.ca" },
-  { "name": "R2 Games", "domain": "r2games.com" }
+  { "name": "R2 Games", "domain": "r2games.com" },
+  { "name": "Dragonpass", "domain": "dragonpass.com" },
+  { "name": "DeLonghi", "domain": "delonghi.com" },
+  { "name": "Channel 5", "domain": "channel5.com" },
+  { "name": "Gillette", "domain": "gillette.co.uk" },
+  { "name": "RClone", "domain": "rclone.org" },
+  { "name": "Motorola", "domain": "motorola.com" },
+  {"name": "Blackberry", "domain": "blackberry.com" },
+  {"name": "APK 4 Fun", "domain": "apk4fun.com" },
+  {"name": "APK Fun", "domain": "apkfun.org" },
+  {"name": "Kleenex", "domain": "kleenex.co.uk" },
+  {"name": "Axios (Promise based HTTP Client)", "domain": "axios.rest" },
+  {"name": "Drupal", "domain": "drupal.org" }
 ]

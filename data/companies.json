@@ -279,5 +279,8 @@
   {"name": "Exagenica", "domain": "exagenica.com" },
   {"name": "Shell", "domain": "shell.co.uk" },
   {"name": "Dice", "domain": "dicefm.com" },
+  {"name": "Travelex", "domain": "travelex.co.uk" },
+  {"name": "Starbucks", "domain": "starbucks.co.uk" },
+  {"name": "Cafe Nero", "domain": "caffenero.com" },
   {"name": "PartyPoker", "domain": "partypoker.com" }
 ]

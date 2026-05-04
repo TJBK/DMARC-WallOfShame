@@ -282,5 +282,11 @@
   {"name": "Travelex", "domain": "travelex.co.uk" },
   {"name": "Starbucks", "domain": "starbucks.co.uk" },
   {"name": "Cafe Nero", "domain": "caffenero.com" },
+  {"name": "Schweppes", "domain": "schweppes.eu" },
+  {"name": "Barbour", "domain": "barbour.com" },
+  {"name": "Prada", "domain": "prada.com" },
+  {"name": "Drop (Massdrop)", "domain": "drop.com" },
+  {"name": "Hak5", "domain": "hak5.org" },
+  {"name": "TicketWeb", "domain": "ticketweb.uk" },
   {"name": "PartyPoker", "domain": "partypoker.com" }
 ]

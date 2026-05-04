@@ -293,5 +293,12 @@
   {"name": "ENow Software", "domain": "enowsoftware.com" },
   {"name": "Loudwire", "domain": "loudwire.com" },
   {"name": "Rewst", "domain": "Rewst.com" },
+  {"name": "Heinz", "domain": "heinz.com" },
+  {"name": "Hellmanns", "domain": "hellmanns.com" },
+  {"name": "Quorn", "domain": "quorn.com" },
+  {"name": "Waitrose", "domain": "Waitrose.com" },
+  {"name": "Crocs", "domain": "crocs.co.uk" },
+  {"name": "Greggs", "domain": "greggs.com" },
+  {"name": "Wenzels", "domain": "wenzels.co.uk" },
   {"name": "Universal Pictures", "domain": "universalpictures.co.uk" }
 ]

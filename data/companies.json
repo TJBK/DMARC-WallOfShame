@@ -290,5 +290,8 @@
   {"name": "TicketWeb", "domain": "ticketweb.uk" },
   {"name": "PartyPoker", "domain": "partypoker.com" },
   {"name": "EasyEntra", "domain": "easyentra.com" },
-  {"name": "ENow Software", "domain": "enowsoftware.com" }
+  {"name": "ENow Software", "domain": "enowsoftware.com" },
+  {"name": "Loudwire", "domain": "loudwire.com" },
+  {"name": "Rewst", "domain": "Rewst.com" },
+  {"name": "Universal Pictures", "domain": "universalpictures.co.uk" }
 ]

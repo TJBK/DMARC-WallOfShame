@@ -42,3 +42,13 @@ jobs:
         with:
           name: non_dmarc-json
           path: docs/non_dmarc.json
+
+      - name: Commit changes
+        run: |
+          git diff --quiet || (
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add output/non_dmarc.json
+            git commit -m "Update DMARC status"
+            git push
+          )

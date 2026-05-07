@@ -380,6 +380,7 @@
   { "name": "Aros Kommunikation", "domain": "aroskommunikation.dk" },
   { "name": "Aros Privat Hospital", "domain": "arosph.dk" },
   { "name": "Arriva", "domain": "arriva.dk" },
+  { "name": "Arriva Bus", "domain": "arrivabus.co.uk" },
   { "name": "Artha Kapitalforvaltning", "domain": "arthakapitalforvaltning.dk" },
   { "name": "Dansk Artistforbund", "domain": "artisten.dk" },
   { "name": "Asento", "domain": "asento.dk" },
@@ -974,5 +975,12 @@
   { "name": "Aston Martin", "domain": "Aston Martin" },
   { "name": "Brenner IT", "domain": "brennercom.it" },
   { "name": "Cogeco", "domain": "cogeco.com" },
-  { "name": "Aussie Broadband", "domain": "cogeco.com" }
+  { "name": "Aussie Broadband", "domain": "cogeco.com" },
+  { "name": "Orange", "domain": "orange.com" },
+  { "name": "Orange", "domain": "orange.jobs" },
+  { "name": "Auto Europe", "domain": "autoeurope.com" },
+  { "name": "FlixBus", "domain": "flixbus.co.uk" },
+  { "name": "First Bus", "domain": "firstbus.co.uk" },
+  { "name": "National Express", "domain": "nationalexpress.com" },
+  { "name": "AppCheck", "domain": "appcheck-ng.com"}
 ]

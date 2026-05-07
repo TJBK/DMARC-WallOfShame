@@ -1,6 +1,8 @@
 # DMARC-WallOfShame [![Deploy Pages](https://github.com/jkerai1/DMARC-WallOfShame/actions/workflows/pages.yml/badge.svg)](https://github.com/jkerai1/DMARC-WallOfShame/actions/workflows/pages.yml) [![DMARC Check](https://github.com/jkerai1/DMARC-WallOfShame/actions/workflows/dmarc-check-js.yml/badge.svg)](https://github.com/jkerai1/DMARC-WallOfShame/actions/workflows/dmarc-check-js.yml)
-List of companies who do not implement controls to keep their own organisation and their customers safe with the most basic of controls. ```p=none``` is a temporary measure and your domain should not be ```p=none``` forever. 
+List of companies who do not implement DMARC controls to keep their own organisation and their customers safe with DMARC. ```p=none``` is a temporary measure and your domain should not be ```p=none``` forever. 
 
+> [!TIP]
+> This is only for educational purposes to spread the awareness of DMARC importance. The term "Wall of shame" is used humorously and descriptively in the context of cybersecurity awareness culture and is not intended to defame, disparage, or harm any organization. The prescence of a domain does not imply misconduct or compromise. Results are based only on publicly observable DNS records at the time of the Github Action run which is on a cron.
 
 Tracks domains that:
 - Have no DMARC record

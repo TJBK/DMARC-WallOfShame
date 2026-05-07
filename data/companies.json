@@ -981,6 +981,7 @@
   { "name": "FlixBus", "domain": "flixbus.co.uk" },
   { "name": "First Bus", "domain": "firstbus.co.uk" },
   { "name": "National Express", "domain": "nationalexpress.com" },
+  { "name": "National Rail", "domain": "nationalrail.co.uk" },
   { "name": "AppCheck", "domain": "appcheck-ng.com"}
   { "name": "Space Hellas", "domain": "space.gr" },
   { "name": "SingularLogic", "domain": "singularlogic.eu" },
@@ -1033,5 +1034,8 @@
   { "name": "Euroclinic Athens", "domain": "euroclinic.gr" },
   { "name": "Metropolitan Hospital", "domain": "metropolitan-hospital.gr" },
   { "name": "Metropolitan General", "domain": "metropolitan-general.gr" },
-  { "name": "REA Maternity Hospital", "domain": "reahospital.gr" }
+  { "name": "REA Maternity Hospital", "domain": "reahospital.gr" },
+  { "name": "Draytek", "domain": "draytek.co.uk" },
+  { "name": "Elgato", "domain": "elgato.com" },
+  { "name": "Maester", "domain": "maester.dev" }
 ]

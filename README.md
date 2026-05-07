@@ -1,4 +1,4 @@
-# DMARC-WallOfShame
+# DMARC-WallOfShame [![Deploy Pages](https://github.com/jkerai1/DMARC-WallOfShame/actions/workflows/pages.yml/badge.svg)](https://github.com/jkerai1/DMARC-WallOfShame/actions/workflows/pages.yml)
 List of companies who do not implement controls to keep their own organisation and their customers safe with the most basic of controls. ```p=none``` is a temporary measure and your domain should not be ```p=none``` forever. 
 
 

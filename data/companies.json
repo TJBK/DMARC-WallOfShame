@@ -1145,5 +1145,11 @@
   {"name": "The Advisory Network", "domain": "theadvisorynetwork.io" },
   {"name": "The Advisory Network", "domain": "theadvisorynetwork.co.uk" },
   {"name": "The Advisor Network", "domain": "theadvisornetwork.org" },
-  {"name": "Advisory Network for Small Business", "domain": "ansb.org" }
+  {"name": "Advisory Network for Small Business", "domain": "ansb.org" },
+  {"name": "Prometheus", "domain": "prometheus.io" },
+  {"name": "PromLabs", "domain": "promlabs.com" },
+  {"name": "Clouddraft", "domain": "cloudraft.io" },
+  {"name": "Labyrinth Labs", "domain": "lablabs.io" },
+  {"name": "SentinelFox", "domain": "sentinelfox.com" },
+  {"name": "Xamira Networks", "domain": "xamira.de" }
 ]

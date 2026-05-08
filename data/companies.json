@@ -1140,5 +1140,10 @@
   {"name": "InstaTunnel", "domain": "instatunnel.my" },
   {"name": "Expose By Beyond Code", "domain": "expose.dev" },
   {"name": "Kubernetes", "domain": "kubernetes.io" },
-  {"name": "InfoWorld", "domain": "infoworld.com" }
+  {"name": "InfoWorld", "domain": "infoworld.com" },
+  {"name": "Advisory Network", "domain": "advisorynetwork.co.uk" },
+  {"name": "The Advisory Network", "domain": "theadvisorynetwork.io" },
+  {"name": "The Advisory Network", "domain": "theadvisorynetwork.co.uk" },
+  {"name": "The Advisor Network", "domain": "theadvisornetwork.org" },
+  {"name": "Advisory Network for Small Business", "domain": "ansb.org" }
 ]

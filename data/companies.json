@@ -1151,5 +1151,6 @@
   {"name": "Clouddraft", "domain": "cloudraft.io" },
   {"name": "Labyrinth Labs", "domain": "lablabs.io" },
   {"name": "SentinelFox", "domain": "sentinelfox.com" },
-  {"name": "Xamira Networks", "domain": "xamira.de" }
+  {"name": "Xamira Networks", "domain": "xamira.de" },
+  {"name": "Brazilian Government", "domain": "gov.br" },
 ]

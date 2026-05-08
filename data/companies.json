@@ -1131,5 +1131,6 @@
   { "name": "App Control", "domain": "appcontrol.com" },
   { "name": "AppControl.io", "domain": "appcontrol.ai" },
   { "name": "Dragonet Communications", "domain": "dragonet.es" },
-  { "name": "Simify", "domain": "simify.com" }
+  { "name": "Simify", "domain": "simify.com" },
+  {"name": "Red Maple Technologies", "domain": "redmapletech.com" }
 ]

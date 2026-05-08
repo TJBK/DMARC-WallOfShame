@@ -1130,5 +1130,7 @@
   { "name": "Magic Sword", "domain": "magicsword.io" },
   { "name": "App Control", "domain": "appcontrol.com" },
   { "name": "AppControl.io", "domain": "appcontrol.ai" },
-  { "name": "Dragonet Communications", "domain": "dragonet.es" }
+  { "name": "Dragonet Communications", "domain": "dragonet.es" },
+  { "name": "Simify", "domain": "simify.com" }
+]
 ]

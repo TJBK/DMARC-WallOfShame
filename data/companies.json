@@ -1238,5 +1238,7 @@
   {"name": "Government Of Palestine", "domain": "gov.ps" },
   {"name": "Government Of North Macedonia", "domain": "gov.mk" },
   {"name": "Government Of Jamaica", "domain": "gov.jm" },
-  {"name": "Government Of Nepal", "domain": "gov.np" }
+  {"name": "Government Of Nepal", "domain": "gov.np" },
+  {"name": "Government Of Ghana", "domain": "gov.gh" },
+  {"name": "Government Of Lebanon", "domain": "gov.lb" }
 ]

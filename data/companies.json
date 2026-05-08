@@ -1126,5 +1126,8 @@
   { "name": "Monofor", "domain": "monofor.com" },
   { "name": "ReShield" ,"domain": "reshield.io" },
   { "name": "DAS-Security" ,"domain": "dbappsecurity.com" },
-  { "name": "Armitego", "domain": "amitego.com" }
+  { "name": "Armitego", "domain": "amitego.com" },
+  { "name": "Magic Sword", "domain": "magicsword.io" },
+  { "name": "App Control", "domain": "appcontrol.com" },
+  { "name": "AppControl.io", "domain": "appcontrol.ai" }
 ]

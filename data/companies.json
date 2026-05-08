@@ -1135,5 +1135,10 @@
   {"name": "Red Maple Technologies", "domain": "redmapletech.com" },
   {"name": "AdminDroid", "domain": "admindroid.com" },
   {"name": "Action on Smoking and Health", "domain": "ash.org.uk" },
-  {"name": "Mayoclinic", "domain": "mayoclinic.org" }
+  {"name": "Mayoclinic", "domain": "mayoclinic.org" },
+  {"name": "Bluebyte IT", "domain": "bluebyteits.com" },
+  {"name": "InstaTunnel", "domain": "instatunnel.my" },
+  {"name": "Expose By Beyond Code", "domain": "expose.dev" },
+  {"name": "Kubernetes", "domain": "kubernetes.io" },
+  {"name": "InfoWorld", "domain": "infoworld.com" }
 ]

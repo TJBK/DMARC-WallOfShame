@@ -1188,7 +1188,7 @@
   {"name": "XP Pen", "domain": "xp-pen.com" },
   {"name": "Javascript", "domain": "javascript.com" },
   {"name": "Optimum Nutrition", "domain": "optimumnutrition.com" },
-  {"name": "Cathy Pacific", "domain": "cathaypacific.com" }
+  {"name": "Cathy Pacific", "domain": "cathaypacific.com" },
   {"name": "KFC", "domain": "kfc.co.jp" },
   {"name": "ANA", "domain": "ana.co.jp" }
   {"name": "Brussels Airlines", "domain": "brusselsairlines.com" },
@@ -1215,5 +1215,10 @@
   {"name": "Desmume", "domain": "desmume.org" }, 
   {"name": "Sri Lankan Parliament", "domain": "parliament.lk" }, 
   {"name": "Age of Empires", "domain": "ageofempires.com" }, 
-  {"name": "Age of Empires", "domain": "pasteboard.co" }
+  {"name": "Age of Empires", "domain": "pasteboard.co" },
+  {"name": "Budweiser", "domain": "budweiser.co.uk" },
+  {"name": "Coors beer", "domain": "coorsbeer.com" },
+  {"name": "San Miguel", "domain": "sanmiguel.com" },
+  {"name": "Peroni", "domain": "peroniitalia.com" },
+  {"name": "Corona", "domain": "coronaextra.co.uk" }
 ]

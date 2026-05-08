@@ -1133,5 +1133,7 @@
   { "name": "Dragonet Communications", "domain": "dragonet.es" },
   { "name": "Simify", "domain": "simify.com" },
   {"name": "Red Maple Technologies", "domain": "redmapletech.com" },
-  {"name": "AdminDroid", "domain": "admindroid.com" }
+  {"name": "AdminDroid", "domain": "admindroid.com" },
+  {"name": "Action on Smoking and Health", "domain": "ash.org.uk" },
+  {"name": "Mayoclinic", "domain": "mayoclinic.org" }
 ]

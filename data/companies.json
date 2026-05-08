@@ -1094,5 +1094,14 @@
   {"name": "John Deere", "domain": "deere.co.uk" },
   {"name": "Chugai Pharmaceutical", "domain": "chugai-pharm.co.jp" },
   {"name": "Netease Games", "domain": "neteasegames.com" },
-  {"name": "Shougang Century Holdings Limited", "domain": "shougangcentury.com.hk" }
+  {"name": "Shougang Century Holdings Limited", "domain": "shougangcentury.com.hk" },
+  { "name": "Netco", "domain": "groupe-netco.com" },
+  { "name": "OptiTune", "domain": "opti-tune.com" },
+  { "name": "TechMonkeys", "domain": "techmonkeys.co.uk" },
+  { "name": "Fuzed IT", "domain": "fuzedit.co.uk" },
+  { "name": "Prime Networks", "domain": "prime-networks.co.uk" },
+  { "name": "Ark IT", "domain": "arkitservices.co.uk" },
+  { "name": "Silver Cloud Technologies", "domain": "silvercloud-tech.com" },
+  { "name": "Stridon IT", "domain": "stridon.co.uk" },
+  { "name": "Beardy Tech", "domain": "beardytech.com" }
 ]

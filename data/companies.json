@@ -1240,5 +1240,6 @@
   {"name": "Government Of Jamaica", "domain": "gov.jm" },
   {"name": "Government Of Nepal", "domain": "gov.np" },
   {"name": "Government Of Ghana", "domain": "gov.gh" },
-  {"name": "Government Of Lebanon", "domain": "gov.lb" }
+  {"name": "Government Of Lebanon", "domain": "gov.lb" },
+  {"name": "Chinese tobacco company", "domain": "ctihk.com.hk" }
 ]

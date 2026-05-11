@@ -1241,5 +1241,7 @@
   {"name": "Government Of Nepal", "domain": "gov.np" },
   {"name": "Government Of Ghana", "domain": "gov.gh" },
   {"name": "Government Of Lebanon", "domain": "gov.lb" },
-  {"name": "Chinese tobacco company", "domain": "ctihk.com.hk" }
+  {"name": "Chinese tobacco company", "domain": "ctihk.com.hk" },
+  {"name": "rsainsurance.co.uk", "domain": "RSA Insurance" },
+  {"name": "Ont9.com", "domain": "Ont9" }
 ]

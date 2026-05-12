@@ -1215,7 +1215,7 @@
   {"name": "Desmume", "domain": "desmume.org" }, 
   {"name": "Sri Lankan Parliament", "domain": "parliament.lk" }, 
   {"name": "Age of Empires", "domain": "ageofempires.com" }, 
-  {"name": "Age of Empires", "domain": "pasteboard.co" },
+  {"name": "Pasteboard", "domain": "pasteboard.co" },
   {"name": "Budweiser", "domain": "budweiser.co.uk" },
   {"name": "Coors beer", "domain": "coorsbeer.com" },
   {"name": "San Miguel", "domain": "sanmiguel.com" },
@@ -1294,5 +1294,6 @@
   { "name": "Peake Technology", "domain": "peaketechnology.com", "industry": "IT" },
   { "name": "Ds Tech", "domain": "dstech.net", "industry": "IT" },
   { "name": "Akita", "domain": "akita.co.uk", "industry": "IT" },
-  { "name": "Es Consult", "domain": "esconsult.net", "industry": "IT" }
+  { "name": "Es Consult", "domain": "esconsult.net", "industry": "IT" },
+  { "name": "DeepWiki By Devin", "domain": "deepwiki.com", "industry": "IT" }
 ]

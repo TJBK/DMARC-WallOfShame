@@ -1219,7 +1219,7 @@
   {"name": "Budweiser", "domain": "budweiser.co.uk" },
   {"name": "Coors beer", "domain": "coorsbeer.com" },
   {"name": "San Miguel", "domain": "sanmiguel.com" },
-  {"name": "Peroni", "domain": "peroniitalia.com" },
+  {"name": "Peroni","domain": "peroniitalia.com" },
   {"name": "Corona", "domain": "coronaextra.co.uk" },
   {"name": "Government Of Kazakhstan", "domain": "gov.kz" },
   {"name": "Government Of Colombia", "domain": "gov.co" },
@@ -1295,5 +1295,11 @@
   { "name": "Ds Tech", "domain": "dstech.net", "industry": "IT" },
   { "name": "Akita", "domain": "akita.co.uk", "industry": "IT" },
   { "name": "Es Consult", "domain": "esconsult.net", "industry": "IT" },
-  { "name": "DeepWiki By Devin", "domain": "deepwiki.com", "industry": "IT" }
+  { "name": "DeepWiki By Devin", "domain": "deepwiki.com", "industry": "IT" },
+  { "name": "NetStar", "domain": "netstar.ai", "industry": "IT" },
+  { "name": "Intellimeds", "domain": "intellimeds.co", "industry": "Health" },
+  { "name": "Intellimeds", "domain": "intellimeds.net", "industry": "Health" },
+  { "name": "Don't Die", "domain": "dontdie.com", "industry": "Health" },
+  { "name": "Kaffek", "domain": "kaffek.co.uk", "industry": "Food and Drink" }
+  { "name": "illy", "domain": "illy.com", "industry": "Food and Drink" }
 ]

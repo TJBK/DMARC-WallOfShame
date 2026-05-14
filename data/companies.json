@@ -1301,5 +1301,6 @@
   { "name": "Intellimeds", "domain": "intellimeds.net", "industry": "Health" },
   { "name": "Don't Die", "domain": "dontdie.com", "industry": "Health" },
   { "name": "Kaffek", "domain": "kaffek.co.uk", "industry": "Food and Drink" },
-  { "name": "illy", "domain": "illy.com", "industry": "Food and Drink" }
+  { "name": "illy", "domain": "illy.com", "industry": "Food and Drink" },
+  { "name": "Dreame", "domain": "dreamestore.co.uk" }
 ]

@@ -11,6 +11,8 @@
   let renderFrame = 0;
   let searchTimer = 0;
   let filteredDirty = true;
+  const smoothPageScroll =
+    !/firefox/i.test(navigator.userAgent) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const state = { q: "", status: "all", tld: "", industry: "", sort: "az", page: 1 };
 
   const el = {
@@ -54,7 +56,7 @@
   function scrollResultsTop() {
     if (!el.resultsTable) return;
     const top = el.resultsTable.getBoundingClientRect().top + window.scrollY - 8;
-    window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+    window.scrollTo({ top: Math.max(0, top), behavior: smoothPageScroll ? "smooth" : "auto" });
   }
 
   function pageResults() {

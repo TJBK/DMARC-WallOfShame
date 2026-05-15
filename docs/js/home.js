@@ -21,8 +21,6 @@
   let searchTimer = 0;
   /** Whether filters or sort changed since the last recompute. */
   let filteredDirty = true;
-  /** Current render function once the data layer is ready. */
-  let renderResults = null;
 
   /** UI state: search text, filters, sort key, current page. */
   const state = { q: "", status: "all", tld: "", industry: "", sort: "az", page: 1 };
@@ -56,7 +54,7 @@
     if (renderFrame) return;
     renderFrame = window.requestAnimationFrame(() => {
       renderFrame = 0;
-      if (renderResults) renderResults();
+      render();
     });
   }
 
@@ -80,6 +78,74 @@
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(scrollResultsTop);
     });
+  }
+
+  /**
+   * Rebuilds `filtered` from `data` using `state`, then sorts in place.
+   */
+  function compute() {
+    const q = state.q.trim().toLowerCase();
+    filtered = data.filter((d) => {
+      if (state.status !== "all" && d.status !== state.status) return false;
+      if (state.tld && d._tld !== state.tld) return false;
+      if (state.industry === "__unclassified__") {
+        if (d.industry) return false;
+      } else if (state.industry && d.industry !== state.industry) return false;
+      return !q || d._search.includes(q);
+    });
+
+    const ord = state.sort;
+    filtered.sort((a, b) => {
+      const an = a._nameLower;
+      const bn = b._nameLower;
+      if (ord === "az") return collator.compare(an, bn);
+      if (ord === "za") return collator.compare(bn, an);
+      if (ord === "tld") return collator.compare(a._tld, b._tld) || collator.compare(an, bn);
+      if (ord === "industry") {
+        return collator.compare(a._industryLower || "\uffff", b._industryLower || "\uffff") || collator.compare(an, bn);
+      }
+      if (ord === "status") return collator.compare(a.status || "", b.status || "") || collator.compare(an, bn);
+      return 0;
+    });
+  }
+
+  /** Escapes text before inserting into HTML template literals. */
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+  }
+
+  /** Builds one table row as HTML. */
+  function rowHtml(d) {
+    const cls = d.status === "no_dmarc" ? "no" : "pn";
+    const indCls = d.industry ? "" : "empty";
+    return `<tr class="row">
+        <td class="nm">${escapeHtml(d.name || "")}</td>
+        <td class="dm">${escapeHtml(d.domain || "")}</td>
+        <td class="tld">${d._tld}</td>
+        <td class="ind ${indCls}">${escapeHtml(d.industry || "")}</td>
+        <td><span class="st ${cls}">${cls === "no" ? "NO RECORD" : "p=none"}</span></td>
+        <td class="ts">${window.formatDate(d.last_checked)}</td>
+      </tr>`;
+  }
+
+  /**
+   * Runs compute() when needed, updates pager UI, renders current page of rows into `#list`.
+   */
+  function render() {
+    if (filteredDirty) {
+      compute();
+      filteredDirty = false;
+    }
+    const total = filtered.length;
+    const pages = Math.max(1, Math.ceil(total / PAGE));
+    if (state.page > pages) state.page = pages;
+    const start = (state.page - 1) * PAGE;
+    const slice = filtered.slice(start, start + PAGE);
+    el.resultCount.textContent = `${total.toLocaleString()} match${total === 1 ? "" : "es"}`;
+    el.pageLabel.textContent = `page ${state.page} / ${pages}`;
+    el.list.innerHTML = slice.length ? slice.map(rowHtml).join("") : '<tr><td class="empty" colspan="6">// no matches</td></tr>';
   }
 
   /* ---------- Dark / light theme (persisted) ---------- */
@@ -125,7 +191,7 @@
     try {
       data = await window.fetchDmarcData();
     } catch (e) {
-      $("list").innerHTML = '<tr><td class="empty" colspan="6">connection error · retry</td></tr>';
+      el.list.innerHTML = '<tr><td class="empty" colspan="6">connection error · retry</td></tr>';
       return;
     }
 
@@ -177,78 +243,6 @@
     oU.value = "__unclassified__";
     oU.textContent = "(unclassified)";
     el.indSel.appendChild(oU);
-
-    /**
-     * Rebuilds `filtered` from `data` using `state`, then sorts in place.
-     */
-    function compute() {
-      const q = state.q.trim().toLowerCase();
-      filtered = data.filter((d) => {
-        if (state.status !== "all" && d.status !== state.status) return false;
-        if (state.tld && d._tld !== state.tld) return false;
-        if (state.industry === "__unclassified__") {
-          if (d.industry) return false;
-        } else if (state.industry && d.industry !== state.industry) return false;
-        return !q || d._search.includes(q);
-      });
-      const ord = state.sort;
-      filtered.sort((a, b) => {
-        const an = a._nameLower;
-        const bn = b._nameLower;
-        if (ord === "az") return collator.compare(an, bn);
-        if (ord === "za") return collator.compare(bn, an);
-        if (ord === "tld") return collator.compare(a._tld, b._tld) || collator.compare(an, bn);
-        if (ord === "industry")
-          return collator.compare(a._industryLower || "\uffff", b._industryLower || "\uffff") ||
-            collator.compare(an, bn);
-        if (ord === "status") return collator.compare(a.status || "", b.status || "") || collator.compare(an, bn);
-        return 0;
-      });
-    }
-
-    /** Escapes text before inserting into HTML template literals. */
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, (c) =>
-        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-      );
-    }
-
-    /** Builds one table row as HTML. */
-    function rowHtml(d) {
-      const cls = d.status === "no_dmarc" ? "no" : "pn";
-      const indCls = d.industry ? "" : "empty";
-      return `<tr class="row">
-        <td class="nm">${escapeHtml(d.name || "")}</td>
-        <td class="dm">${escapeHtml(d.domain || "")}</td>
-        <td class="tld">${d._tld}</td>
-        <td class="ind ${indCls}">${escapeHtml(d.industry || "")}</td>
-        <td><span class="st ${cls}">${cls === "no" ? "NO RECORD" : "p=none"}</span></td>
-        <td class="ts">${window.formatDate(d.last_checked)}</td>
-      </tr>`;
-    }
-
-    /**
-     * Runs compute(), updates pager UI, renders current page of rows into `#list`.
-     */
-    function render() {
-      if (filteredDirty) {
-        compute();
-        filteredDirty = false;
-      }
-      const total = filtered.length;
-      const pages = Math.max(1, Math.ceil(total / PAGE));
-      if (state.page > pages) state.page = pages;
-      const start = (state.page - 1) * PAGE;
-      const slice = filtered.slice(start, start + PAGE);
-      el.resultCount.textContent = `${total.toLocaleString()} match${total === 1 ? "" : "es"}`;
-      el.pageLabel.textContent = `page ${state.page} / ${pages}`;
-      if (!slice.length) {
-        el.list.innerHTML = '<tr><td class="empty" colspan="6">// no matches</td></tr>';
-      } else {
-        el.list.innerHTML = slice.map(rowHtml).join("");
-      }
-    }
-    renderResults = render;
 
     /* Collapsible filter panel + badge when non-default filters active */
     const statusButtons = [...el.statusSeg.querySelectorAll("button")];

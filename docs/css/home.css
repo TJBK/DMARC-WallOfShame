@@ -369,6 +369,7 @@ body {
   table-layout: fixed;
   font-size: 12px;
   line-height: 1.2;
+  min-height: 2050px;
 }
 .results-table th {
   color: var(--ink-mute);
@@ -489,9 +490,11 @@ body {
 
 .empty,
 .loading {
+  height: 2000px;
   padding: 60px 0;
   text-align: center;
   color: var(--ink-mute);
+  vertical-align: top;
 }
 .loading::after {
   content: " ▍";

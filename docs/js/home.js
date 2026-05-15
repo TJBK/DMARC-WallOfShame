@@ -23,6 +23,8 @@
   let filteredDirty = true;
   /** Current render function once the data layer is ready. */
   let renderResults = null;
+  /** Whether the next table render should move the viewport back to the table. */
+  let pendingTableScroll = false;
 
   /** UI state: search text, filters, sort key, current page. */
   const state = { q: "", status: "all", tld: "", industry: "", sort: "az", page: 1 };
@@ -70,7 +72,14 @@
   /** Smoothly scrolls the results table back into view. */
   function scrollResultsTop() {
     if (!el.resultsTable) return;
-    el.resultsTable.scrollIntoView({ behavior: "smooth", block: "start" });
+    const isFirefox = navigator.userAgent.includes("Firefox/");
+    el.resultsTable.scrollIntoView({ behavior: isFirefox ? "auto" : "smooth", block: "start" });
+  }
+
+  /** Redraws the current page, then scrolls after the DOM update has finished. */
+  function pageResults() {
+    pendingTableScroll = true;
+    scheduleRender();
   }
 
   /* ---------- Dark / light theme (persisted) ---------- */
@@ -235,9 +244,13 @@
       el.pageLabel.textContent = `page ${state.page} / ${pages}`;
       if (!slice.length) {
         el.list.innerHTML = '<tr><td class="empty" colspan="6">// no matches</td></tr>';
-        return;
+      } else {
+        el.list.innerHTML = slice.map(rowHtml).join("");
       }
-      el.list.innerHTML = slice.map(rowHtml).join("");
+      if (pendingTableScroll) {
+        pendingTableScroll = false;
+        window.requestAnimationFrame(scrollResultsTop);
+      }
     }
     renderResults = render;
 
@@ -293,13 +306,11 @@
     });
     el.prev.addEventListener("click", () => {
       state.page = Math.max(1, state.page - 1);
-      scheduleRender();
-      scrollResultsTop();
+      pageResults();
     });
     el.next.addEventListener("click", () => {
       state.page = state.page + 1;
-      scheduleRender();
-      scrollResultsTop();
+      pageResults();
     });
 
     /** Export all rows matching current filters as RFC-style CSV download. */

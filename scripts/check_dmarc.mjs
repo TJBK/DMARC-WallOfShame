@@ -25,6 +25,7 @@ const INPUT_FILE = "data/companies.json";
 /** Domains that lack DMARC or use p=none only; used by the site/docs. */
 const OUTPUT_FILE = "docs/non_dmarc.json";
 const DEFAULT_CONCURRENCY = 48;
+const RETRYABLE_DNS_CODES = new Set(["ESERVFAIL", "ECONNRESET", "ETIMEOUT", "ETIMEDOUT", "EBUSY"]);
 
 /**
  * @param {string} name
@@ -65,15 +66,7 @@ function isTerminalDnsError(err) {
 function isRetryableDnsError(err) {
   if (isTerminalDnsError(err)) return false;
   const c = err && typeof err === "object" && "code" in err ? String(/** @type {{ code: unknown }} */ (err).code) : "";
-  if (
-    c === "ESERVFAIL" ||
-    c === "ECONNRESET" ||
-    c === "ETIMEOUT" ||
-    c === "ETIMEDOUT" ||
-    c === "EBUSY"
-  ) {
-    return true;
-  }
+  if (RETRYABLE_DNS_CODES.has(c)) return true;
   if (err instanceof Error && err.message === "DNS query timeout") return true;
   return false;
 }
@@ -84,22 +77,19 @@ function isRetryableDnsError(err) {
  * @param {number} timeoutMs
  * @returns {Promise<string[][]>}
  */
-function resolveTxtWithTimeout(hostname, timeoutMs) {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => {
+async function resolveTxtWithTimeout(hostname, timeoutMs) {
+  /** @type {ReturnType<typeof setTimeout>} */
+  let timer;
+  const timeout = new Promise((resolve, reject) => {
+    timer = setTimeout(() => {
       reject(Object.assign(new Error("DNS query timeout"), { code: "ETIMEOUT" }));
     }, timeoutMs);
-    dnsPromises.resolveTxt(hostname).then(
-      (v) => {
-        clearTimeout(t);
-        resolve(v);
-      },
-      (e) => {
-        clearTimeout(t);
-        reject(e);
-      },
-    );
   });
+  try {
+    return await Promise.race([dnsPromises.resolveTxt(hostname), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /**
@@ -110,7 +100,7 @@ function resolveTxtWithTimeout(hostname, timeoutMs) {
  */
 function policyFromTxtChunks(chunks) {
   const record = chunks.join("");
-  if (!record.includes("v=DMARC1")) {
+  if (!record.toLowerCase().includes("v=dmarc1")) {
     return null;
   }
   /** @type {Record<string, string>} */
@@ -119,8 +109,8 @@ function policyFromTxtChunks(chunks) {
     const trimmed = part.trim();
     if (!trimmed.includes("=")) continue;
     const i = trimmed.indexOf("=");
-    const key = /** @type {string} */ (trimmed.slice(0, i));
-    const val = trimmed.slice(i + 1);
+    const key = trimmed.slice(0, i).trim().toLowerCase();
+    const val = trimmed.slice(i + 1).trim();
     tags[key] = val;
   }
   return (tags.p ?? "none").toLowerCase();

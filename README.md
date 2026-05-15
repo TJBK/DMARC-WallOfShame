@@ -12,7 +12,22 @@ Tracks domains that:
 
 - Daily GitHub Action checks domains. If the company remediates then they get cleared down.
 - Updates `docs/non_dmarc.json`
-- GitHub Pages serves the console UI from `docs/index.html` with styles in `docs/css/home.css` and scripts in `docs/js/` (`shared.js`, `home.js`). The browser DMARC checker lives at `docs/dmarc-check.html`.
+- GitHub Pages serves the console UI from `docs/index.html`. Edit the readable source assets (`docs/css/*.css`, `docs/js/*.js`), then run `node scripts/minify_assets.mjs` to refresh the `.min.css` and `.min.js` files used by the pages. The Pages workflow runs this before deploy.
+
+## Local development
+
+```bash
+node scripts/minify_assets.mjs
+python3 -m http.server 8123 --directory docs
+```
+
+Then open `http://127.0.0.1:8123/`.
+
+After changing `docs/css/*.css` or `docs/js/*.js`, rerun:
+
+```bash
+node scripts/minify_assets.mjs
+```
 
 ## Contributing
 

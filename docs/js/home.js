@@ -57,7 +57,7 @@
     try {
       data = await window.fetchDmarcData();
     } catch (e) {
-      $("list").innerHTML = '<div class="empty">connection error · retry</div>';
+      $("list").innerHTML = '<tr><td class="empty" colspan="6">connection error · retry</td></tr>';
       return;
     }
 
@@ -171,21 +171,21 @@
       $("resultCount").textContent = total.toLocaleString() + " match" + (total === 1 ? "" : "es");
       $("pageLabel").textContent = `page ${state.page} / ${pages}`;
       if (!slice.length) {
-        $("list").innerHTML = '<div class="empty">// no matches</div>';
+        $("list").innerHTML = '<tr><td class="empty" colspan="6">// no matches</td></tr>';
         return;
       }
       $("list").innerHTML = slice
         .map((d) => {
           const cls = d.status === "no_dmarc" ? "no" : "pn";
           const indCls = d.industry ? "" : "empty";
-          return `<div class="row">
-        <div class="nm">${escapeHtml(d.name || "")}</div>
-        <div class="dm">${escapeHtml(d.domain || "")}</div>
-        <div class="tld">${window.tldOf(d.domain)}</div>
-        <div class="ind ${indCls}">${escapeHtml(d.industry || "")}</div>
-        <div><span class="st ${cls}">${cls === "no" ? "NO RECORD" : "p=none"}</span></div>
-        <div class="ts">${window.formatDate(d.last_checked)}</div>
-      </div>`;
+          return `<tr class="row">
+        <td class="nm">${escapeHtml(d.name || "")}</td>
+        <td class="dm">${escapeHtml(d.domain || "")}</td>
+        <td class="tld">${window.tldOf(d.domain)}</td>
+        <td class="ind ${indCls}">${escapeHtml(d.industry || "")}</td>
+        <td><span class="st ${cls}">${cls === "no" ? "NO RECORD" : "p=none"}</span></td>
+        <td class="ts">${window.formatDate(d.last_checked)}</td>
+      </tr>`;
         })
         .join("");
     }

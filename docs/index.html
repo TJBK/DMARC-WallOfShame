@@ -147,16 +147,23 @@
         </div>
       </section>
 
-      <div class="hdr">
-        <div class="col-nm">organisation</div>
-        <div class="col-dm">domain</div>
-        <div class="col-tld">tld</div>
-        <div class="col-ind">industry</div>
-        <div>status</div>
-        <div class="col-ts">checked</div>
-      </div>
-
-      <div id="list"><div class="loading">resolving records</div></div>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="col-nm" scope="col">organisation</th>
+            <th class="col-dm" scope="col">domain</th>
+            <th class="col-tld" scope="col">tld</th>
+            <th class="col-ind" scope="col">industry</th>
+            <th scope="col">status</th>
+            <th class="col-ts" scope="col">checked</th>
+          </tr>
+        </thead>
+        <tbody id="list">
+          <tr>
+            <td class="loading" colspan="6">resolving records</td>
+          </tr>
+        </tbody>
+      </table>
 
       <div class="pager">
         <span id="resultCount">…</span>

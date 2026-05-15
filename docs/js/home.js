@@ -4,7 +4,9 @@
  */
 (() => {
   /** @param {string} id */
-  const $ = (id) => document.getElementById(id);
+  function getElementById(id) {
+    return document.getElementById(id);
+  }
 
   /** Shared text collator for the table sort modes. */
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
@@ -27,25 +29,25 @@
 
   /** Cached DOM nodes. */
   const el = {
-    themeBtn: $("themeBtn"),
-    session: $("session"),
-    list: $("list"),
-    stTotal: $("stTotal"),
-    stNo: $("stNo"),
-    stP: $("stP"),
-    lastChecked: $("lastChecked"),
-    tldSel: $("tldSel"),
-    indSel: $("indSel"),
-    sortSel: $("sortSel"),
-    q: $("q"),
-    controls: $("controls"),
-    filterToggle: $("filterToggle"),
-    statusSeg: $("statusSeg"),
-    prev: $("prev"),
-    next: $("next"),
-    resultCount: $("resultCount"),
-    pageLabel: $("pageLabel"),
-    exportBtn: $("exportBtn"),
+    themeBtn: getElementById("themeBtn"),
+    session: getElementById("session"),
+    list: getElementById("list"),
+    stTotal: getElementById("stTotal"),
+    stNo: getElementById("stNo"),
+    stP: getElementById("stP"),
+    lastChecked: getElementById("lastChecked"),
+    tldSel: getElementById("tldSel"),
+    indSel: getElementById("indSel"),
+    sortSel: getElementById("sortSel"),
+    q: getElementById("q"),
+    controls: getElementById("controls"),
+    filterToggle: getElementById("filterToggle"),
+    statusSeg: getElementById("statusSeg"),
+    prev: getElementById("prev"),
+    next: getElementById("next"),
+    resultCount: getElementById("resultCount"),
+    pageLabel: getElementById("pageLabel"),
+    exportBtn: getElementById("exportBtn"),
     resultsTable: document.querySelector(".results-table"),
   };
 
@@ -130,6 +132,11 @@
       </tr>`;
   }
 
+  /** Escapes one value for CSV output. */
+  function csvCell(s) {
+    return `"${String(s ?? "").replace(/"/g, '""')}"`;
+  }
+
   /**
    * Runs compute() when needed, updates pager UI, renders current page of rows into `#list`.
    */
@@ -149,7 +156,7 @@
   }
 
   /* ---------- Dark / light theme (persisted) ---------- */
-  const setTheme = (t) => {
+  function setTheme(t) {
     document.body.dataset.theme = t;
     el.themeBtn.textContent = t === "dark" ? "☀" : "◐";
     try {
@@ -157,7 +164,7 @@
     } catch (e) {
       /* storage unavailable */
     }
-  };
+  }
   setTheme(localStorage.getItem("cn_theme") ?? "dark");
   el.themeBtn.addEventListener("click", () => {
     setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
@@ -309,11 +316,10 @@
     /** Export all rows matching current filters as RFC-style CSV download. */
     el.exportBtn.addEventListener("click", () => {
       compute();
-      const cell = (s) => `"${String(s ?? "").replace(/"/g, '""')}"`;
       const csv = [
         "name,domain,industry,status,tld,last_checked",
         ...filtered.map((d) =>
-          [cell(d.name), cell(d.domain), cell(d.industry), cell(d.status), cell(d._tld), cell(d.last_checked)].join(",")
+          [csvCell(d.name), csvCell(d.domain), csvCell(d.industry), csvCell(d.status), csvCell(d._tld), csvCell(d.last_checked)].join(",")
         ),
       ].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });

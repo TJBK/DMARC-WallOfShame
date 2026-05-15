@@ -3,16 +3,19 @@
  * for `_dmarc.<domain>` TXT, parses the record, and shows a verdict (reject / quarantine / none / missing).
  */
 (() => {
-  const $ = (id) => document.getElementById(id);
+  /** @param {string} id */
+  function getElementById(id) {
+    return document.getElementById(id);
+  }
 
   /** Cached DOM nodes. */
   const el = {
-    themeBtn: $("themeBtn"),
-    termBody: $("termBody"),
+    themeBtn: getElementById("themeBtn"),
+    termBody: getElementById("termBody"),
   };
 
   /* ---------- Theme (same key as home page) ---------- */
-  const setTheme = (t) => {
+  function setTheme(t) {
     document.body.dataset.theme = t;
     el.themeBtn.textContent = t === "dark" ? "☀" : "◐";
     try {
@@ -20,7 +23,7 @@
     } catch (e) {
       /* ignore */
     }
-  };
+  }
   setTheme(localStorage.getItem("cn_theme") ?? "dark");
   el.themeBtn.addEventListener("click", () => {
     setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");

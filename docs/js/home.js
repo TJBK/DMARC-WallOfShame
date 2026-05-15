@@ -23,8 +23,6 @@
   let filteredDirty = true;
   /** Current render function once the data layer is ready. */
   let renderResults = null;
-  /** Whether the next table render should move the viewport back to the table. */
-  let pendingTableScroll = false;
 
   /** UI state: search text, filters, sort key, current page. */
   const state = { q: "", status: "all", tld: "", industry: "", sort: "az", page: 1 };
@@ -69,17 +67,19 @@
     scheduleRender();
   }
 
-  /** Smoothly scrolls the results table back into view. */
+  /** Moves the viewport back to the results table without Firefox's janky smooth-scroll path. */
   function scrollResultsTop() {
     if (!el.resultsTable) return;
-    const isFirefox = navigator.userAgent.includes("Firefox/");
-    el.resultsTable.scrollIntoView({ behavior: isFirefox ? "auto" : "smooth", block: "start" });
+    const top = el.resultsTable.getBoundingClientRect().top + window.scrollY - 8;
+    window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
   }
 
   /** Redraws the current page, then scrolls after the DOM update has finished. */
   function pageResults() {
-    pendingTableScroll = true;
     scheduleRender();
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(scrollResultsTop);
+    });
   }
 
   /* ---------- Dark / light theme (persisted) ---------- */
@@ -247,10 +247,6 @@
       } else {
         el.list.innerHTML = slice.map(rowHtml).join("");
       }
-      if (pendingTableScroll) {
-        pendingTableScroll = false;
-        window.requestAnimationFrame(scrollResultsTop);
-      }
     }
     renderResults = render;
 
@@ -305,10 +301,13 @@
       updateFilterBadge();
     });
     el.prev.addEventListener("click", () => {
+      if (state.page <= 1) return;
       state.page = Math.max(1, state.page - 1);
       pageResults();
     });
     el.next.addEventListener("click", () => {
+      const pages = Math.max(1, Math.ceil(filtered.length / PAGE));
+      if (state.page >= pages) return;
       state.page = state.page + 1;
       pageResults();
     });

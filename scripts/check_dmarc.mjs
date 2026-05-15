@@ -1,6 +1,7 @@
 // Bulk DMARC auditor: reads company domains from data/companies.json, resolves
 // _dmarc.<domain> TXT, and writes docs/non_dmarc.json listing domains with no
 // record or policy p=none (quarantine/reject domains are omitted from output).
+// The published rows carry through each company's industry label for filtering.
 //
 // Node's dns.resolve* paths use libuv's thread pool, which defaults to 4
 // workers. Set UV_THREADPOOL_SIZE before starting node to at least your
@@ -156,10 +157,10 @@ async function getDmarcPolicy(domain, timeoutMs, maxAttempts) {
 
 /**
  * Rows for domains that belong on the list: missing DMARC or `p=none` only (quarantine/reject omitted).
- * @param {{ name: string; domain: string }} company
+ * @param {{ name: string; domain: string; industry?: string }} company
  * @param {string | null} policy
  * @param {string} lastChecked
- * @returns {{ name: string; domain: string; status: string; last_checked: string } | null}
+ * @returns {{ name: string; domain: string; industry: string; status: string; last_checked: string } | null}
  */
 function entryForCompany(company, policy, lastChecked) {
   const { domain } = company;
@@ -174,6 +175,7 @@ function entryForCompany(company, policy, lastChecked) {
   return {
     name: company.name,
     domain,
+    industry: company.industry || "",
     status,
     last_checked: lastChecked,
   };
@@ -185,7 +187,7 @@ function entryForCompany(company, policy, lastChecked) {
  * @param {number} concurrency
  * @param {number} timeoutMs
  * @param {number} maxAttempts
- * @returns {Promise<{ name: string; domain: string; status: string; last_checked: string }[]>}
+ * @returns {Promise<{ name: string; domain: string; industry: string; status: string; last_checked: string }[]>}
  */
 async function runParallelLookups(companies, concurrency, timeoutMs, maxAttempts) {
   const lastChecked = new Date().toISOString();
@@ -232,7 +234,7 @@ async function runParallelLookups(companies, concurrency, timeoutMs, maxAttempts
 }
 
 /**
- * @param {{ name: string; domain: string; status: string; last_checked: string }[]} flagged
+ * @param {{ name: string; domain: string; industry: string; status: string; last_checked: string }[]} flagged
  */
 async function writeOutput(flagged) {
   const dir = dirname(OUTPUT_FILE);

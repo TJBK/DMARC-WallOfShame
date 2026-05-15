@@ -9,6 +9,7 @@ window.DMARC_DATA_URL = "non_dmarc.json";
 /**
  * Fetches the domain list, deduplicates by domain (case-insensitive), and caches in sessionStorage.
  * Second visit in the same tab avoids a network round-trip when cache is valid.
+ * Cached rows must include `industry`; older caches are ignored so schema changes self-heal.
  *
  * @returns {Promise<Array<{ domain: string, name?: string, status?: string, last_checked?: string }>>}
  * @throws {Error} When HTTP fetch fails (non-OK status).
@@ -18,7 +19,9 @@ window.fetchDmarcData = async function () {
   if (cached) {
     try {
       const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
+      if (Array.isArray(parsed) && parsed.length && parsed.every((r) => r && typeof r === "object" && "industry" in r)) {
+        return parsed;
+      }
     } catch (e) {
       /* ignore corrupt cache; refetch below */
     }

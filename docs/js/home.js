@@ -61,18 +61,8 @@
       return;
     }
 
-    /**
-     * Optional `window.__industryMap` from HTML can map domain → industry label.
-     * @param {{ domain?: string }} d
-     */
-    function inferIndustry(d) {
-      const u =
-        window.__industryMap && window.__industryMap[(d.domain || "").toLowerCase()];
-      if (u) return u;
-      return "";
-    }
     data.forEach((d) => {
-      d.industry = inferIndustry(d);
+      d.industry = d.industry || "";
     });
 
     /* Summary stats in the header */

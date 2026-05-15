@@ -1303,5 +1303,6 @@
   { "name": "Kaffek", "domain": "kaffek.co.uk", "industry": "Food and Drink" },
   { "name": "illy", "domain": "illy.com", "industry": "Food and Drink" },
   { "name": "Dreame", "domain": "dreamestore.co.uk", "industry": "Other" },
-  { "name": "Have I been Squatted", "domain": "haveibeensquatted.com", "industry": "Cybersecurity" }
+  { "name": "Have I been Squatted", "domain": "haveibeensquatted.com", "industry": "Cybersecurity" },
+  { "name": "Signable", "domain": "signable.app", "industry": "Other" }
 ]

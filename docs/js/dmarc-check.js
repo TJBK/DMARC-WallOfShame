@@ -5,21 +5,26 @@
 (() => {
   const $ = (id) => document.getElementById(id);
 
+  /** Cached DOM nodes. */
+  const el = {
+    themeBtn: $("themeBtn"),
+    termBody: $("termBody"),
+  };
+
   /* ---------- Theme (same key as home page) ---------- */
-  const themeBtn = $("themeBtn");
   const setTheme = (t) => {
     document.body.dataset.theme = t;
-    themeBtn.textContent = t === "dark" ? "☀" : "◐";
+    el.themeBtn.textContent = t === "dark" ? "☀" : "◐";
     try {
       localStorage.setItem("cn_theme", t);
     } catch (e) {
       /* ignore */
     }
   };
-  setTheme(localStorage.getItem("cn_theme") || "dark");
-  themeBtn.onclick = () => setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
-
-  const termBody = $("termBody");
+  setTheme(localStorage.getItem("cn_theme") ?? "dark");
+  el.themeBtn.addEventListener("click", () => {
+    setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
+  });
 
   /**
    * Appends a styled line to the fake terminal. Removes blink cursors from older lines unless `keepCursors`.
@@ -30,9 +35,11 @@
     const span = document.createElement("span");
     span.className = "session-line";
     span.innerHTML = html;
-    termBody.appendChild(span);
+    el.termBody.appendChild(span);
     if (!opts.keepCursors) {
-      termBody.querySelectorAll(".session-line:not(:last-child) .cursor").forEach((n) => n.remove());
+      for (const cursor of el.termBody.querySelectorAll(".session-line:not(:last-child) .cursor")) {
+        cursor.remove();
+      }
     }
     return span;
   }
@@ -61,7 +68,7 @@
 
   /** Clears terminal, plays intro lines, then injects the domain form. */
   async function bootSequence() {
-    termBody.innerHTML = "";
+    el.termBody.innerHTML = "";
     appendLine('<span class="pmt">user@dmarc-shame</span> <span class="mute">~</span> $ <span class="cursor"></span>');
     await wait(500);
     await typeLine('<span class="pmt">user@dmarc-shame</span> <span class="mute">~</span> $ ./dmarc_check.sh');
@@ -90,7 +97,7 @@
       <input id="domainInput" type="text" placeholder="example.com" autocomplete="off" spellcheck="false" />
       <button type="submit" id="runBtn">run check</button>
     `;
-    termBody.appendChild(form);
+    el.termBody.appendChild(form);
     const quick = document.createElement("div");
     quick.className = "quick";
     quick.innerHTML = `
@@ -100,31 +107,27 @@
       <button type="button" class="chip" data-d="bbc.co.uk">bbc.co.uk</button>
       <button type="button" class="chip" data-d="apache.org">apache.org</button>
     `;
-    termBody.appendChild(quick);
+    el.termBody.appendChild(quick);
 
     const input = document.getElementById("domainInput");
-    setTimeout(() => input.focus(), 80);
+    window.setTimeout(() => input.focus(), 80);
 
-    quick.querySelectorAll(".chip").forEach((c) => {
-      c.onclick = () => {
-        input.value = c.dataset.d;
-        form.requestSubmit();
-      };
+    quick.addEventListener("click", (event) => {
+      const chip = event.target.closest(".chip");
+      if (!chip || !quick.contains(chip)) return;
+      input.value = chip.dataset.d;
+      form.requestSubmit();
     });
 
-    form.onsubmit = (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const v = (input.value || "")
-        .trim()
-        .toLowerCase()
-        .replace(/^https?:\/\//, "")
-        .replace(/\/.*$/, "");
+      const v = normalizeDomain(input.value);
       if (!v || !v.includes(".")) {
         appendLine('<span class="hl">[err]</span> please enter a valid domain (eg. example.com)');
         return;
       }
       runCheck(v);
-    };
+    });
   }
 
   /** Disables inputs while a DNS lookup is in flight; updates button label. */
@@ -264,6 +267,15 @@
     disableForm(false);
   }
 
+  /** Normalizes URL-ish input to a bare lower-case domain. */
+  function normalizeDomain(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\//, "")
+      .replace(/\/.*$/, "");
+  }
+
   /** Strips mailto: and trims RUA/RUF aggregate lists for chip display. */
   function shortAddr(s) {
     return String(s)
@@ -279,15 +291,15 @@
    */
   function parseDmarc(record) {
     const out = {};
-    record.split(";").forEach((part) => {
+    for (const part of record.split(";")) {
       const t = part.trim();
-      if (!t) return;
+      if (!t) continue;
       const eq = t.indexOf("=");
-      if (eq < 0) return;
+      if (eq < 0) continue;
       const k = t.slice(0, eq).trim().toLowerCase();
       const v = t.slice(eq + 1).trim();
       out[k] = v;
-    });
+    }
     return out;
   }
 
@@ -303,18 +315,18 @@
    * @param {Array<{ k: string, v: string, cls?: string }>} tags Key/value chips
    */
   function finishVerdict(domain, cls, head, msgHtml, record, tags) {
-    document.querySelectorAll(".verdict, .record-box, .tags-row, .actions").forEach((n) => n.remove());
+    removeResultBlocks();
 
     const v = document.createElement("div");
     v.className = "verdict " + cls;
     v.innerHTML = `<h3>${escapeHtml(head)}</h3><p>${msgHtml}</p>`;
-    termBody.appendChild(v);
+    el.termBody.appendChild(v);
 
     if (record) {
       const r = document.createElement("div");
       r.className = "record-box";
       r.innerHTML = `<div class="lab">_dmarc.${escapeHtml(domain)} · TXT</div><code>${escapeHtml(record)}</code>`;
-      termBody.appendChild(r);
+      el.termBody.appendChild(r);
     }
 
     if (tags && tags.length) {
@@ -326,7 +338,7 @@
           return `<span class="tag${c}">${escapeHtml(t.k)}=<b>${escapeHtml(t.v)}</b></span>`;
         })
         .join("");
-      termBody.appendChild(row);
+      el.termBody.appendChild(row);
     }
 
     const a = document.createElement("div");
@@ -335,19 +347,26 @@
       <button type="button" id="againBtn">↻ check another domain</button>
       <a href="index.html">◀ back to the wall</a>
     `;
-    termBody.appendChild(a);
-    document.getElementById("againBtn").onclick = () => {
-      document.querySelectorAll(".verdict, .record-box, .tags-row, .actions").forEach((n) => n.remove());
+    el.termBody.appendChild(a);
+    document.getElementById("againBtn").addEventListener("click", () => {
+      removeResultBlocks();
       const inp = document.getElementById("domainInput");
       if (inp) {
         inp.value = "";
         inp.focus();
       }
-    };
+    });
+  }
+
+  /** Removes the verdict/output blocks without touching the form. */
+  function removeResultBlocks() {
+    for (const node of document.querySelectorAll(".verdict, .record-box, .tags-row, .actions")) {
+      node.remove();
+    }
   }
 
   function escapeHtml(s) {
-    return String(s).replace(/[&<>\"']/g, (c) =>
+    return String(s).replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
     );
   }

@@ -6,6 +6,42 @@
 /** @type {string} Relative URL for the JSON dataset (domains with weak/missing DMARC). */
 window.DMARC_DATA_URL = "non_dmarc.json";
 
+/** Known multi-part suffixes for heuristic TLD parsing. */
+const KNOWN_MULTI_PART_SUFFIXES = new Set([
+  "co.uk",
+  "co.jp",
+  "com.cn",
+  "org.uk",
+  "ac.uk",
+  "gov.uk",
+  "io.",
+  "org.au",
+]);
+
+/** Reads a cached dataset from sessionStorage if it still matches the current schema. */
+function readCachedDmarcData() {
+  const cached = sessionStorage.getItem("dmarc_data");
+  if (!cached) return null;
+  try {
+    const parsed = JSON.parse(cached);
+    if (Array.isArray(parsed) && parsed.length && parsed.every((r) => r && typeof r === "object" && "industry" in r)) {
+      return parsed;
+    }
+  } catch (e) {
+    /* ignore corrupt cache; refetch below */
+  }
+  return null;
+}
+
+/** Writes the cleaned dataset to sessionStorage, ignoring quota and private-mode failures. */
+function cacheDmarcData(rows) {
+  try {
+    sessionStorage.setItem("dmarc_data", JSON.stringify(rows));
+  } catch (e) {
+    /* private mode / quota: still return data */
+  }
+}
+
 /**
  * Fetches the domain list, deduplicates by domain (case-insensitive), and caches in sessionStorage.
  * Second visit in the same tab avoids a network round-trip when cache is valid.
@@ -14,18 +50,12 @@ window.DMARC_DATA_URL = "non_dmarc.json";
  * @returns {Promise<Array<{ domain: string, name?: string, status?: string, last_checked?: string }>>}
  * @throws {Error} When HTTP fetch fails (non-OK status).
  */
-window.fetchDmarcData = async function () {
-  const cached = sessionStorage.getItem("dmarc_data");
+window.fetchDmarcData = async function fetchDmarcData() {
+  const cached = readCachedDmarcData();
   if (cached) {
-    try {
-      const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length && parsed.every((r) => r && typeof r === "object" && "industry" in r)) {
-        return parsed;
-      }
-    } catch (e) {
-      /* ignore corrupt cache; refetch below */
-    }
+    return cached;
   }
+
   const res = await fetch(window.DMARC_DATA_URL);
   if (!res.ok) throw new Error("Failed to load data");
   const data = await res.json();
@@ -37,11 +67,7 @@ window.fetchDmarcData = async function () {
     if (!seen.has(key)) seen.set(key, r);
   }
   const cleaned = Array.from(seen.values());
-  try {
-    sessionStorage.setItem("dmarc_data", JSON.stringify(cleaned));
-  } catch (e) {
-    /* private mode / quota: still return data */
-  }
+  cacheDmarcData(cleaned);
   return cleaned;
 };
 
@@ -52,14 +78,13 @@ window.fetchDmarcData = async function () {
  * @param {string} domain
  * @returns {string} Leading-dot TLD/suffix or em dash if not parseable.
  */
-window.tldOf = function (domain) {
+window.tldOf = function tldOf(domain) {
   if (!domain) return "—";
   const d = String(domain).toLowerCase().trim();
   if (!d.includes(".")) return "—";
   const parts = d.split(".");
   const last2 = parts.slice(-2).join(".");
-  const known2 = ["co.uk", "co.jp", "com.cn", "org.uk", "ac.uk", "gov.uk", "io.", "org.au"];
-  if (known2.includes(last2)) return "." + last2;
+  if (KNOWN_MULTI_PART_SUFFIXES.has(last2)) return "." + last2;
   return "." + parts[parts.length - 1];
 };
 
@@ -68,7 +93,7 @@ window.tldOf = function (domain) {
  *
  * @param {string} s Raw status: `no_dmarc`, `p_none`, or other.
  */
-window.statusLabel = function (s) {
+window.statusLabel = function statusLabel(s) {
   if (s === "no_dmarc") return "No DMARC record";
   if (s === "p_none") return "p=none (monitor only)";
   return s || "Unknown";
@@ -79,7 +104,7 @@ window.statusLabel = function (s) {
  *
  * @param {string} s Same as statusLabel.
  */
-window.statusShort = function (s) {
+window.statusShort = function statusShort(s) {
   if (s === "no_dmarc") return "NO RECORD";
   if (s === "p_none") return "p=none";
   return s || "?";
@@ -91,7 +116,7 @@ window.statusShort = function (s) {
  * @param {string} iso Date string parseable by Date.
  * @returns {string} ISO date portion or em dash on failure.
  */
-window.formatDate = function (iso) {
+window.formatDate = function formatDate(iso) {
   try {
     const d = new Date(iso);
     if (isNaN(d)) return "—";

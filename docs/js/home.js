@@ -1,33 +1,18 @@
-/**
- * Home page (index): theme toggle, decorative “terminal” intro, loads wall data,
- * builds filters, paginates the list, and exports CSV.
- */
 (() => {
-  /** @param {string} id */
   function getElementById(id) {
     return document.getElementById(id);
   }
 
-  /** Shared text collator for the table sort modes. */
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
-
-  /** Full dataset after fetch; each row may gain `.industry` from optional map. */
+  const compareText = collator.compare;
   let data = [];
-  /** Subset after search/filter/sort; used for pagination and export. */
   let filtered = [];
-  /** Rows per results page. */
   const PAGE = 100;
-  /** RequestAnimationFrame id for coalescing repeated UI updates. */
   let renderFrame = 0;
-  /** Debounce timer for search input. */
   let searchTimer = 0;
-  /** Whether filters or sort changed since the last recompute. */
   let filteredDirty = true;
-
-  /** UI state: search text, filters, sort key, current page. */
   const state = { q: "", status: "all", tld: "", industry: "", sort: "az", page: 1 };
 
-  /** Cached DOM nodes. */
   const el = {
     themeBtn: getElementById("themeBtn"),
     session: getElementById("session"),
@@ -48,10 +33,10 @@
     resultCount: getElementById("resultCount"),
     pageLabel: getElementById("pageLabel"),
     exportBtn: getElementById("exportBtn"),
+    rowTemplate: getElementById("resultRowTemplate"),
     resultsTable: document.querySelector(".results-table"),
   };
 
-  /** Schedules a single render on the next animation frame. */
   function scheduleRender() {
     if (renderFrame) return;
     renderFrame = window.requestAnimationFrame(() => {
@@ -60,21 +45,18 @@
     });
   }
 
-  /** Marks the filtered dataset stale and redraws the current view. */
   function refreshResults() {
     clearTimeout(searchTimer);
     filteredDirty = true;
     scheduleRender();
   }
 
-  /** Moves the viewport back to the results table without Firefox's janky smooth-scroll path. */
   function scrollResultsTop() {
     if (!el.resultsTable) return;
     const top = el.resultsTable.getBoundingClientRect().top + window.scrollY - 8;
     window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
   }
 
-  /** Redraws the current page, then scrolls after the DOM update has finished. */
   function pageResults() {
     scheduleRender();
     window.requestAnimationFrame(() => {
@@ -82,64 +64,76 @@
     });
   }
 
-  /**
-   * Rebuilds `filtered` from `data` using `state`, then sorts in place.
-   */
   function compute() {
     const q = state.q.trim().toLowerCase();
-    filtered = data.filter((d) => {
-      if (state.status !== "all" && d.status !== state.status) return false;
-      if (state.tld && d._tld !== state.tld) return false;
-      if (state.industry === "__unclassified__") {
-        if (d.industry) return false;
-      } else if (state.industry && d.industry !== state.industry) return false;
-      return !q || d._search.includes(q);
-    });
+    const status = state.status;
+    const tld = state.tld;
+    const industry = state.industry;
+    const rows = [];
+
+    for (const d of data) {
+      if (status !== "all" && d.status !== status) continue;
+      if (tld && d._tld !== tld) continue;
+      if (industry === "__unclassified__") {
+        if (d.industry) continue;
+      } else if (industry && d.industry !== industry) {
+        continue;
+      }
+      if (q && !d._search.includes(q)) continue;
+      rows.push(d);
+    }
+    filtered = rows;
 
     const ord = state.sort;
     filtered.sort((a, b) => {
       const an = a._nameLower;
       const bn = b._nameLower;
-      if (ord === "az") return collator.compare(an, bn);
-      if (ord === "za") return collator.compare(bn, an);
-      if (ord === "tld") return collator.compare(a._tld, b._tld) || collator.compare(an, bn);
+      if (ord === "az") return compareText(an, bn);
+      if (ord === "za") return compareText(bn, an);
+      if (ord === "tld") return compareText(a._tld, b._tld) || compareText(an, bn);
       if (ord === "industry") {
-        return collator.compare(a._industryLower || "\uffff", b._industryLower || "\uffff") || collator.compare(an, bn);
+        return compareText(a._industryLower || "\uffff", b._industryLower || "\uffff") || compareText(an, bn);
       }
-      if (ord === "status") return collator.compare(a.status || "", b.status || "") || collator.compare(an, bn);
+      if (ord === "status") return compareText(a.status || "", b.status || "") || compareText(an, bn);
       return 0;
     });
   }
 
-  /** Escapes text before inserting into HTML template literals. */
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-    );
-  }
-
-  /** Builds one table row as HTML. */
-  function rowHtml(d) {
+  function createResultRow(d) {
+    const row = el.rowTemplate.content.firstElementChild.cloneNode(true);
     const cls = d.status === "no_dmarc" ? "no" : "pn";
-    const indCls = d.industry ? "" : "empty";
-    return `<tr class="row">
-        <td class="nm">${escapeHtml(d.name || "")}</td>
-        <td class="dm">${escapeHtml(d.domain || "")}</td>
-        <td class="tld">${d._tld}</td>
-        <td class="ind ${indCls}">${escapeHtml(d.industry || "")}</td>
-        <td><span class="st ${cls}">${cls === "no" ? "NO RECORD" : "p=none"}</span></td>
-        <td class="ts">${window.formatDate(d.last_checked)}</td>
-      </tr>`;
+    const name = row.cells[0];
+    const domain = row.cells[1];
+    const tld = row.cells[2];
+    const industry = row.cells[3];
+    const status = row.cells[4].firstElementChild;
+    const checked = row.cells[5];
+
+    name.textContent = d.name || "";
+    domain.textContent = d.domain || "";
+    tld.textContent = d._tld;
+    industry.textContent = d.industry || "";
+    industry.classList.toggle("empty", !d.industry);
+    status.textContent = cls === "no" ? "NO RECORD" : "p=none";
+    status.className = "st " + cls;
+    checked.textContent = window.formatDate(d.last_checked);
+    return row;
   }
 
-  /** Escapes one value for CSV output. */
+  function createMessageRow(message, className) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.className = className;
+    cell.colSpan = 6;
+    cell.textContent = message;
+    row.appendChild(cell);
+    return row;
+  }
+
   function csvCell(s) {
     return `"${String(s ?? "").replace(/"/g, '""')}"`;
   }
 
-  /**
-   * Runs compute() when needed, updates pager UI, renders current page of rows into `#list`.
-   */
   function render() {
     if (filteredDirty) {
       compute();
@@ -149,13 +143,20 @@
     const pages = Math.max(1, Math.ceil(total / PAGE));
     if (state.page > pages) state.page = pages;
     const start = (state.page - 1) * PAGE;
-    const slice = filtered.slice(start, start + PAGE);
+    const end = Math.min(start + PAGE, total);
     el.resultCount.textContent = `${total.toLocaleString()} match${total === 1 ? "" : "es"}`;
     el.pageLabel.textContent = `page ${state.page} / ${pages}`;
-    el.list.innerHTML = slice.length ? slice.map(rowHtml).join("") : '<tr><td class="empty" colspan="6">// no matches</td></tr>';
+    if (start === end) {
+      el.list.replaceChildren(createMessageRow("// no matches", "empty"));
+      return;
+    }
+    const rows = document.createDocumentFragment();
+    for (let i = start; i < end; i++) {
+      rows.appendChild(createResultRow(filtered[i]));
+    }
+    el.list.replaceChildren(rows);
   }
 
-  /* ---------- Dark / light theme (persisted) ---------- */
   function setTheme(t) {
     document.body.dataset.theme = t;
     el.themeBtn.textContent = t === "dark" ? "☀" : "◐";
@@ -170,7 +171,6 @@
     setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
   });
 
-  /* ---------- Fake CLI session: timed lines for atmosphere ---------- */
   const lines = [
     { txt: '<span class="pmt">$</span> ./audit.sh --scope global --policy missing,none', delay: 0 },
     { txt: '<span class="ok">[ok]</span> connecting to dns resolvers …', delay: 280 },
@@ -198,7 +198,7 @@
     try {
       data = await window.fetchDmarcData();
     } catch (e) {
-      el.list.innerHTML = '<tr><td class="empty" colspan="6">connection error · retry</td></tr>';
+      el.list.replaceChildren(createMessageRow("connection error · retry", "empty"));
       return;
     }
 
@@ -221,37 +221,28 @@
       if (d.industry) indCounts[d.industry] = (indCounts[d.industry] || 0) + 1;
     }
 
-    /* Summary stats in the header */
     el.stTotal.textContent = data.length.toLocaleString();
     el.stNo.textContent = noDmarcCount.toLocaleString();
     el.stP.textContent = pNoneCount.toLocaleString();
     el.lastChecked.textContent = data[0] ? window.formatDate(data[0].last_checked) : "—";
 
-    /* TLD dropdown: top 30 suffixes by count */
     const tlds = Object.entries(tldCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 30);
+    const tldOptions = document.createDocumentFragment();
     for (const [t, n] of tlds) {
-      const o = document.createElement("option");
-      o.value = t;
-      o.textContent = `${t}  (${n})`;
-      el.tldSel.appendChild(o);
+      tldOptions.appendChild(new Option(`${t}  (${n})`, t));
     }
+    el.tldSel.appendChild(tldOptions);
 
-    /* Industry dropdown from inferred labels + “unclassified” sentinel */
     const industryEntries = Object.entries(indCounts).sort((a, b) => b[1] - a[1]);
+    const industryOptions = document.createDocumentFragment();
     for (const [t, n] of industryEntries) {
-      const o = document.createElement("option");
-      o.value = t;
-      o.textContent = `${t}  (${n})`;
-      el.indSel.appendChild(o);
+      industryOptions.appendChild(new Option(`${t}  (${n})`, t));
     }
-    const oU = document.createElement("option");
-    oU.value = "__unclassified__";
-    oU.textContent = "(unclassified)";
-    el.indSel.appendChild(oU);
+    industryOptions.appendChild(new Option("(unclassified)", "__unclassified__"));
+    el.indSel.appendChild(industryOptions);
 
-    /* Collapsible filter panel + badge when non-default filters active */
     const statusButtons = [...el.statusSeg.querySelectorAll("button")];
     el.filterToggle.addEventListener("click", () => {
       const open = el.controls.classList.toggle("open");
@@ -313,7 +304,6 @@
       pageResults();
     });
 
-    /** Export all rows matching current filters as RFC-style CSV download. */
     el.exportBtn.addEventListener("click", () => {
       compute();
       const csv = [

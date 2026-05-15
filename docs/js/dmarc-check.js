@@ -1,20 +1,22 @@
-/**
- * DMARC check tool page: terminal-themed UI that queries Cloudflare’s DNS-over-HTTPS API
- * for `_dmarc.<domain>` TXT, parses the record, and shows a verdict (reject / quarantine / none / missing).
- */
 (() => {
-  /** @param {string} id */
   function getElementById(id) {
     return document.getElementById(id);
   }
 
-  /** Cached DOM nodes. */
+  function element(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
   const el = {
     themeBtn: getElementById("themeBtn"),
     termBody: getElementById("termBody"),
+    checkFormTemplate: getElementById("checkFormTemplate"),
+    actionsTemplate: getElementById("actionsTemplate"),
   };
 
-  /* ---------- Theme (same key as home page) ---------- */
   function setTheme(t) {
     document.body.dataset.theme = t;
     el.themeBtn.textContent = t === "dark" ? "☀" : "◐";
@@ -29,14 +31,8 @@
     setTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
   });
 
-  /**
-   * Appends a styled line to the fake terminal. Removes blink cursors from older lines unless `keepCursors`.
-   * @param {string} html Safe-ish HTML for spans (classes pmt, ok, hl, mute, cursor, …).
-   * @param {{ keepCursors?: boolean }} [opts]
-   */
   function appendLine(html, opts = {}) {
-    const span = document.createElement("span");
-    span.className = "session-line";
+    const span = element("span", "session-line");
     span.innerHTML = html;
     el.termBody.appendChild(span);
     if (!opts.keepCursors) {
@@ -47,16 +43,10 @@
     return span;
   }
 
-  /** Promisified delay for typing animation and pacing. */
   function wait(ms) {
     return new Promise((r) => setTimeout(r, ms));
   }
 
-  /**
-   * Types plain text of `html` char-by-char for effect, then restores full HTML (colors/spans).
-   * @param {string} html
-   * @param {number} [perChar] ms between characters
-   */
   async function typeLine(html, perChar = 6) {
     const span = appendLine("");
     const tmp = document.createElement("span");
@@ -69,9 +59,8 @@
     span.innerHTML = html;
   }
 
-  /** Clears terminal, plays intro lines, then injects the domain form. */
   async function bootSequence() {
-    el.termBody.innerHTML = "";
+    el.termBody.replaceChildren();
     appendLine('<span class="pmt">user@dmarc-shame</span> <span class="mute">~</span> $ <span class="cursor"></span>');
     await wait(500);
     await typeLine('<span class="pmt">user@dmarc-shame</span> <span class="mute">~</span> $ ./dmarc_check.sh');
@@ -85,34 +74,17 @@
     renderForm();
   }
 
-  /**
-   * Builds the search form and quick-pick chips inside `#termBody`.
-   * Submit normalizes URL-ish input to a bare domain and calls `runCheck`.
-   */
   function renderForm() {
     const old = document.getElementById("checkForm");
     if (old) old.remove();
-    const form = document.createElement("form");
-    form.id = "checkForm";
-    form.className = "check-form";
-    form.innerHTML = `
-      <span class="dollar">$</span>
-      <input id="domainInput" type="text" placeholder="example.com" autocomplete="off" spellcheck="false" />
-      <button type="submit" id="runBtn">run check</button>
-    `;
-    el.termBody.appendChild(form);
-    const quick = document.createElement("div");
-    quick.className = "quick";
-    quick.innerHTML = `
-      <span class="mute">try:</span>
-      <button type="button" class="chip" data-d="google.com">google.com</button>
-      <button type="button" class="chip" data-d="github.com">github.com</button>
-      <button type="button" class="chip" data-d="bbc.co.uk">bbc.co.uk</button>
-      <button type="button" class="chip" data-d="apache.org">apache.org</button>
-    `;
-    el.termBody.appendChild(quick);
+    const oldQuick = el.termBody.querySelector(".quick");
+    if (oldQuick) oldQuick.remove();
+    const fragment = el.checkFormTemplate.content.cloneNode(true);
+    const form = fragment.querySelector("#checkForm");
+    const quick = fragment.querySelector(".quick");
+    const input = fragment.querySelector("#domainInput");
+    el.termBody.appendChild(fragment);
 
-    const input = document.getElementById("domainInput");
     window.setTimeout(() => input.focus(), 80);
 
     quick.addEventListener("click", (event) => {
@@ -133,7 +105,6 @@
     });
   }
 
-  /** Disables inputs while a DNS lookup is in flight; updates button label. */
   function disableForm(disabled) {
     const inp = document.getElementById("domainInput");
     const btn = document.getElementById("runBtn");
@@ -144,11 +115,6 @@
     }
   }
 
-  /**
-   * Looks up `_dmarc.<domain>` TXT via Cloudflare public DoH (JSON API).
-   * Picks the first answer whose stripped value starts with `v=dmarc1`.
-   * @param {string} domain Normalized hostname.
-   */
   async function runCheck(domain) {
     disableForm(true);
 
@@ -270,7 +236,6 @@
     disableForm(false);
   }
 
-  /** Normalizes URL-ish input to a bare lower-case domain. */
   function normalizeDomain(value) {
     return String(value || "")
       .trim()
@@ -279,7 +244,6 @@
       .replace(/\/.*$/, "");
   }
 
-  /** Strips mailto: and trims RUA/RUF aggregate lists for chip display. */
   function shortAddr(s) {
     return String(s)
       .split(",")
@@ -287,11 +251,6 @@
       .join(", ");
   }
 
-  /**
-   * Split DMARC record on `;` into tag=value map (keys lowercased).
-   * @param {string} record Raw TXT without outer quotes.
-   * @returns {Record<string, string>}
-   */
   function parseDmarc(record) {
     const out = {};
     for (const part of record.split(";")) {
@@ -306,51 +265,34 @@
     return out;
   }
 
-  /**
-   * Removes any previous result blocks, then appends verdict panel, optional raw record,
-   * tag chips, and actions (check again / back link).
-   *
-   * @param {string} domain
-   * @param {string} cls CSS class: ok | warn | bad
-   * @param {string} head Verdict title (escaped via escapeHtml in caller for domain inside msg only)
-   * @param {string} msgHtml Body HTML (caller builds with escapeHtml where needed)
-   * @param {string|null} record Full DMARC string or null
-   * @param {Array<{ k: string, v: string, cls?: string }>} tags Key/value chips
-   */
   function finishVerdict(domain, cls, head, msgHtml, record, tags) {
     removeResultBlocks();
 
-    const v = document.createElement("div");
-    v.className = "verdict " + cls;
-    v.innerHTML = `<h3>${escapeHtml(head)}</h3><p>${msgHtml}</p>`;
-    el.termBody.appendChild(v);
+    const output = document.createDocumentFragment();
+    const verdict = element("div", "verdict " + cls);
+    const body = element("p");
+    body.innerHTML = msgHtml;
+    verdict.append(element("h3", "", head), body);
+    output.appendChild(verdict);
 
     if (record) {
-      const r = document.createElement("div");
-      r.className = "record-box";
-      r.innerHTML = `<div class="lab">_dmarc.${escapeHtml(domain)} · TXT</div><code>${escapeHtml(record)}</code>`;
-      el.termBody.appendChild(r);
+      const box = element("div", "record-box");
+      box.append(element("div", "lab", `_dmarc.${domain} · TXT`), element("code", "", record));
+      output.appendChild(box);
     }
 
     if (tags && tags.length) {
-      const row = document.createElement("div");
-      row.className = "tags-row";
-      row.innerHTML = tags
-        .map((t) => {
-          const c = t.cls ? " " + t.cls : "";
-          return `<span class="tag${c}">${escapeHtml(t.k)}=<b>${escapeHtml(t.v)}</b></span>`;
-        })
-        .join("");
-      el.termBody.appendChild(row);
+      const row = element("div", "tags-row");
+      for (const t of tags) {
+        const tag = element("span", "tag" + (t.cls ? " " + t.cls : ""));
+        tag.append(document.createTextNode(`${t.k}=`), element("b", "", t.v));
+        row.appendChild(tag);
+      }
+      output.appendChild(row);
     }
 
-    const a = document.createElement("div");
-    a.className = "actions";
-    a.innerHTML = `
-      <button type="button" id="againBtn">↻ check another domain</button>
-      <a href="index.html">◀ back to the wall</a>
-    `;
-    el.termBody.appendChild(a);
+    output.appendChild(el.actionsTemplate.content.firstElementChild.cloneNode(true));
+    el.termBody.appendChild(output);
     document.getElementById("againBtn").addEventListener("click", () => {
       removeResultBlocks();
       const inp = document.getElementById("domainInput");
@@ -361,7 +303,6 @@
     });
   }
 
-  /** Removes the verdict/output blocks without touching the form. */
   function removeResultBlocks() {
     for (const node of document.querySelectorAll(".verdict, .record-box, .tags-row, .actions")) {
       node.remove();

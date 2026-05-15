@@ -80,6 +80,28 @@
         </div>
       </section>
 
+      <template id="checkFormTemplate">
+        <form id="checkForm" class="check-form">
+          <span class="dollar">$</span>
+          <input id="domainInput" type="text" placeholder="example.com" autocomplete="off" spellcheck="false" />
+          <button type="submit" id="runBtn">run check</button>
+        </form>
+        <div class="quick">
+          <span class="mute">try:</span>
+          <button type="button" class="chip" data-d="google.com">google.com</button>
+          <button type="button" class="chip" data-d="github.com">github.com</button>
+          <button type="button" class="chip" data-d="bbc.co.uk">bbc.co.uk</button>
+          <button type="button" class="chip" data-d="apache.org">apache.org</button>
+        </div>
+      </template>
+
+      <template id="actionsTemplate">
+        <div class="actions">
+          <button type="button" id="againBtn">↻ check another domain</button>
+          <a href="index.html">◀ back to the wall</a>
+        </div>
+      </template>
+
       <div class="help" id="help">
         <h2>// what this tool does</h2>
         <p>

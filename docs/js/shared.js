@@ -26,7 +26,12 @@ window.setupTheme = function (buttonId) {
   }
 
   function setTheme(t) {
+    document.documentElement.dataset.theme = t;
     document.body.dataset.theme = t;
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) {
+      themeMeta.setAttribute("content", t === "dark" ? "#111312" : "#f6f8f6");
+    }
     if (themeBtn) {
       themeBtn.textContent = t === "dark" ? "☀" : "◐";
       themeBtn.title = t === "dark" ? "Switch to light theme" : "Switch to dark theme";
